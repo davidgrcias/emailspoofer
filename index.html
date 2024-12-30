@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Email Spoofer Tool</title>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+    ></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #141414;
+        color: #fff;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #1f1f1f;
+        border-radius: 8px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin-top: 12px;
+        font-weight: bold;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      textarea {
+        margin-top: 4px;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #999;
+        background: #2c2c2c;
+        color: #fff;
+      }
+      textarea {
+        resize: vertical;
+      }
+      button {
+        margin-top: 16px;
+        padding: 12px;
+        background: #3f51b5;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #303f9f;
+      }
+      #status {
+        margin-top: 20px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Email Spoofer Tool</h1>
+      <form id="spoofForm">
+        <label for="licenseKey">License Key (Password):</label>
+        <input type="password" id="licenseKey" name="licenseKey" required />
+
+        <label for="senderName">Sender Name:</label>
+        <input type="text" id="senderName" name="senderName" required />
+
+        <label for="subject">Subject:</label>
+        <input type="text" id="subject" name="subject" required />
+
+        <label for="replyTo">Reply-To (optional):</label>
+        <input type="text" id="replyTo" name="replyTo" />
+
+        <label for="receiverEmail">Receiver's Email(s):</label>
+        <input
+          type="text"
+          id="receiverEmail"
+          name="receiverEmail"
+          placeholder="Separate multiple emails with commas"
+          required
+        />
+
+        <label for="messageContent">Message (HTML or Plain Text):</label>
+        <textarea
+          id="messageContent"
+          name="messageContent"
+          rows="6"
+          required
+        ></textarea>
+
+        <button type="submit">Send Spoofed Email</button>
+      </form>
+
+      <div id="status"></div>
+    </div>
+
+    <script>
+      (function () {
+        emailjs.init("b7sUVK1vR2n1RaOZw");
+      })();
+
+      document
+        .getElementById("spoofForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const serviceID = document.getElementById("licenseKey").value;
+          const senderName = document.getElementById("senderName").value;
+          const subject = document.getElementById("subject").value;
+          const replyTo = document.getElementById("replyTo").value;
+          const receiverEmail = document.getElementById("receiverEmail").value;
+          const message = document.getElementById("messageContent").value;
+
+          if (!serviceID) {
+            document.getElementById("status").textContent =
+              "Service ID cannot be empty!";
+            document.getElementById("status").style.color = "red";
+            return;
+          }
+
+          const templateParams = {
+            sender_name: senderName,
+            subject: subject,
+            reply_to: replyTo,
+            to_email: receiverEmail,
+            message: message,
+          };
+
+          const templateID = "template_c0z70fk";
+
+          emailjs.send(serviceID, templateID, templateParams).then(
+            (response) => {
+              console.log("SUCCESS!", response.status, response.text);
+              document.getElementById("status").textContent =
+                "Email sent successfully!";
+              document.getElementById("status").style.color = "green";
+            },
+            (error) => {
+              console.error("FAILED...", error);
+              document.getElementById("status").textContent =
+                "Failed to send email. Check console for details.";
+              document.getElementById("status").style.color = "red";
+            }
+          );
+        });
+    </script>
+  </body>
+</html>
